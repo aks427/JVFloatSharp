@@ -47,8 +47,13 @@ namespace JVFloatSharp
             get { return _floatingLabel.Font; }
             set { _floatingLabel.Font = value; }
         }
+        public UIColor PlaceholderTextColor
+        {
+            get { return _placeholderLabel.TextColor; }
+            set { _placeholderLabel.TextColor = value; }
+        }
 
-        public JVFloatLabeledTextView(RectangleF frame, UIEdgeInsets inset)
+        public JVFloatLabeledTextView(RectangleF frame, UIEdgeInsets inset = new UIEdgeInsets())
             : base(frame)
         {
             if (UIDevice.CurrentDevice.CheckSystemVersion(7, 0))
