@@ -29,135 +29,155 @@ using MonoTouch.UIKit;
 
 namespace JVFloatSharp
 {
-	public class JVFloatLabeledTextField : UITextField 
-	{
-		private readonly UILabel _floatingLabel;
-		private bool _isAnimating;
+    public class JVFloatLabeledTextField : UITextField
+    {
+        private readonly UILabel _floatingLabel;
+        private bool _isAnimating;
 
-		public UIColor FloatingLabelTextColor { get; set; }
-		public UIColor FloatingLabelActiveTextColor { get; set; }
-		public UIFont FloatingLabelFont
-		{
-			get { return _floatingLabel.Font; }
-			set { _floatingLabel.Font = value; }
-		}
+        public UIColor FloatingLabelTextColor { get; set; }
+        public UIColor FloatingLabelActiveTextColor { get; set; }
+        public UIFont FloatingLabelFont
+        {
+            get { return _floatingLabel.Font; }
+            set { _floatingLabel.Font = value; }
+        }
 
-		public JVFloatLabeledTextField(RectangleF frame)
-			: base(frame)
-		{
-			_floatingLabel = new UILabel() 
-			{
-				Alpha = 0.0f
-			};
+        public JVFloatLabeledTextField(RectangleF frame)
+            : base(frame)
+        {
+            _floatingLabel = new UILabel()
+            {
+                Alpha = 0.0f,
+                BackgroundColor = UIColor.Clear
+            };
 
-			AddSubview(_floatingLabel);
+            AddSubview(_floatingLabel);
 
-			FloatingLabelTextColor = UIColor.Gray;
-			FloatingLabelActiveTextColor = UIColor.Blue;
-			FloatingLabelFont = UIFont.BoldSystemFontOfSize(12);
-		}
+            FloatingLabelTextColor = UIColor.Gray;
+            FloatingLabelActiveTextColor = UIColor.Blue;
+            FloatingLabelFont = UIFont.BoldSystemFontOfSize(12);
+        }
 
-		public override string Placeholder 
-		{
-			get { return base.Placeholder; }
-			set 
-			{
-				base.Placeholder = value;
+        public override MonoTouch.Foundation.NSAttributedString AttributedPlaceholder
+        {
+            get
+            {
+                return base.AttributedPlaceholder;
+            }
+            set
+            {
+                base.AttributedPlaceholder = value;
 
-				_floatingLabel.Text = value;
-				_floatingLabel.SizeToFit();
-				_floatingLabel.Frame = 
-					new RectangleF(
-						0, _floatingLabel.Font.LineHeight, 
-						_floatingLabel.Frame.Size.Width, _floatingLabel.Frame.Size.Height);
-			}
-		}
+                _floatingLabel.Text = value.Value;
+                _floatingLabel.SizeToFit();
+                _floatingLabel.Frame =
+                    new RectangleF(
+                        0, _floatingLabel.Font.LineHeight,
+                        _floatingLabel.Frame.Size.Width, _floatingLabel.Frame.Size.Height);
+            }
+        }
 
-		public override RectangleF TextRect(RectangleF forBounds)
-		{
-			if (_floatingLabel == null)
-				return base.TextRect(forBounds);
+        public override string Placeholder
+        {
+            get { return base.Placeholder; }
+            set
+            {
+                base.Placeholder = value;
 
-			return InsetRect(base.TextRect(forBounds), new UIEdgeInsets(_floatingLabel.Font.LineHeight, 0, 0, 0));
-		}
+                _floatingLabel.Text = value;
+                _floatingLabel.SizeToFit();
+                _floatingLabel.Frame =
+                    new RectangleF(
+                        0, _floatingLabel.Font.LineHeight,
+                        _floatingLabel.Frame.Size.Width, _floatingLabel.Frame.Size.Height);
+            }
+        }
 
-		public override RectangleF EditingRect(RectangleF forBounds)
-		{
-			return InsetRect(base.EditingRect(forBounds), new UIEdgeInsets(_floatingLabel.Font.LineHeight, 0, 0, 0));
-		}
+        public override RectangleF TextRect(RectangleF forBounds)
+        {
+            if (_floatingLabel == null)
+                return base.TextRect(forBounds);
 
-		public override RectangleF ClearButtonRect(RectangleF forBounds)
-		{
-			var rect = base.ClearButtonRect(forBounds);
+            return InsetRect(base.TextRect(forBounds), new UIEdgeInsets(_floatingLabel.Font.LineHeight, 0, 0, 0));
+        }
 
-			return new RectangleF(
-				rect.X, rect.Y + _floatingLabel.Font.LineHeight / 2.0f, 
-				rect.Size.Width, rect.Size.Height);
-		}
+        public override RectangleF EditingRect(RectangleF forBounds)
+        {
+            return InsetRect(base.EditingRect(forBounds), new UIEdgeInsets(_floatingLabel.Font.LineHeight, 0, 0, 0));
+        }
 
-		public override void LayoutSubviews()
-		{
-			base.LayoutSubviews();
+        public override RectangleF ClearButtonRect(RectangleF forBounds)
+        {
+            var rect = base.ClearButtonRect(forBounds);
 
-			Action updateLabel = () =>
-			{
-				if (!string.IsNullOrEmpty(Text))
-				{
-					_floatingLabel.Alpha = 1.0f;
-					_floatingLabel.Frame = 
-						new RectangleF(
-							_floatingLabel.Frame.Location.X, 
-							2.0f, 
-							_floatingLabel.Frame.Size.Width, 
-							_floatingLabel.Frame.Size.Height);
-				}
-				else
-				{
-					_floatingLabel.Alpha = 0.0f;
-					_floatingLabel.Frame = 
-						new RectangleF(
-							_floatingLabel.Frame.Location.X,
-							_floatingLabel.Font.LineHeight,
-							_floatingLabel.Frame.Size.Width,
-							_floatingLabel.Frame.Size.Height);
-				}
-			};
+            return new RectangleF(
+                rect.X, rect.Y + _floatingLabel.Font.LineHeight / 2.0f,
+                rect.Size.Width, rect.Size.Height);
+        }
 
-			if (IsFirstResponder)
-			{
-				_floatingLabel.TextColor = FloatingLabelActiveTextColor;
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
 
-				if (_isAnimating)
-				{
-					updateLabel();
+            Action updateLabel = () =>
+            {
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    _floatingLabel.Alpha = 1.0f;
+                    _floatingLabel.Frame =
+                        new RectangleF(
+                            _floatingLabel.Frame.Location.X,
+                            2.0f,
+                            _floatingLabel.Frame.Size.Width,
+                            _floatingLabel.Frame.Size.Height);
+                }
+                else
+                {
+                    _floatingLabel.Alpha = 0.0f;
+                    _floatingLabel.Frame =
+                        new RectangleF(
+                            _floatingLabel.Frame.Location.X,
+                            _floatingLabel.Font.LineHeight,
+                            _floatingLabel.Frame.Size.Width,
+                            _floatingLabel.Frame.Size.Height);
+                }
+            };
 
-					return;
-				}
+            if (IsFirstResponder)
+            {
+                _floatingLabel.TextColor = FloatingLabelActiveTextColor;
 
-				UIView.Animate(
-					0.3f, 0.0f, 
-					UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut, 
-					() => 
-					{
-						_isAnimating = true;
-						updateLabel();
-					}, () => _isAnimating = false);
-			}
-			else
-			{
-				_floatingLabel.TextColor = FloatingLabelTextColor;
+                if (_isAnimating)
+                {
+                    updateLabel();
 
-				updateLabel();
-			}
-		}
+                    return;
+                }
 
-		private static RectangleF InsetRect(RectangleF rect, UIEdgeInsets insets)
-		{
-			return new RectangleF(
-				rect.X + insets.Left, 
-				rect.Y + insets.Top, 
-				rect.Width - insets.Left - insets.Right, 
-				rect.Height - insets.Top - insets.Bottom);
-		}
-	}
+                UIView.Animate(
+                    0.3f, 0.0f,
+                    UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                    () =>
+                    {
+                        _isAnimating = true;
+                        updateLabel();
+                    }, () => _isAnimating = false);
+            }
+            else
+            {
+                _floatingLabel.TextColor = FloatingLabelTextColor;
+
+                updateLabel();
+            }
+        }
+
+        private static RectangleF InsetRect(RectangleF rect, UIEdgeInsets insets)
+        {
+            return new RectangleF(
+                rect.X + insets.Left,
+                rect.Y + insets.Top,
+                rect.Width - insets.Left - insets.Right,
+                rect.Height - insets.Top - insets.Bottom);
+        }
+    }
 }

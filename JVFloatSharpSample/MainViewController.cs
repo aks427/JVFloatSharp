@@ -85,10 +85,10 @@ namespace JVFloatSharpSample
 			};
 			View.AddSubview(div3);
 
-			var descriptionField = new JVFloatLabeledTextField(new RectangleF(JVFieldHMargin, 
+			var descriptionField = new JVFloatLabeledTextView(new RectangleF(JVFieldHMargin, 
 			                                                                  div3.Frame.Y + div3.Frame.Size.Height,
 			                                                                  View.Frame.Size.Width - 2 * JVFieldHMargin, 
-			                                                                  JVFieldHeight))
+			                                                                  JVFieldHeight * 2), new UIEdgeInsets(0, 0, 0, 0))
 			{
 				Placeholder = "Description",
 				Font = UIFont.SystemFontOfSize(JVFieldFontSize),
